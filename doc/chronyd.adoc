@@ -102,7 +102,7 @@ directive in the configuration file. This option is useful if you want to stop
 and restart *chronyd* briefly for any reason, e.g. to install a new version.
 However, it should be used only on systems where the kernel can maintain clock
 compensation whilst not under *chronyd*'s control (i.e. Linux, FreeBSD, NetBSD,
-illumos, and macOS 10.13 or later).
+OpenBSD, illumos, and macOS 10.13 or later).
 
 *-R*::
 When this option is used, the <<chrony.conf.adoc#initstepslew,*initstepslew*>>
@@ -143,9 +143,9 @@ after start in order to drop root privileges. It overrides the
 _@DEFAULT_USER@_.
 +
 On Linux, *chronyd* needs to be compiled with support for the *libcap* library.
-On macOS, FreeBSD, NetBSD, and illumos *chronyd* forks into two processes.
-The child process retains root privileges, but can only perform a very limited
-range of privileged system calls on behalf of the parent.
+On macOS, FreeBSD, NetBSD, OpenBSD, and illumos *chronyd* forks into two
+processes. The child process retains root privileges, but can only perform a
+very limited range of privileged system calls on behalf of the parent.
 
 *-U*::
 This option disables a check for root privileges to allow *chronyd* to be
@@ -159,21 +159,22 @@ specific directives.
 
 *-F* _level_::
 This option configures system call filters loaded by *chronyd* processes if it
-was compiled with support for the Linux secure computing (seccomp) facility.
-Three levels are defined: 0, 1, 2. The filters are disabled at level 0. At
-levels 1 and 2, *chronyd* will be killed if it makes a system call which is
-blocked by the filters. The level can be specified as a negative number to
-trigger the SIGSYS signal instead of SIGKILL, which can be useful for
-debugging. The default value is 0.
+was compiled with support for the Linux secure computing (seccomp) facility or
+OpenBSD pledge. For Linux three levels are defined: 0, 1, 2, for OpenBSD two
+levels: 0, 1. The filters are disabled at level 0. On Linux at levels 1 and 2
+and on OpenBSD at level 1, *chronyd* will be killed if it makes a system call
+which is blocked by the filters. On Linux the level can be specified as a
+negative number to trigger the SIGSYS signal instead of SIGKILL, which can be
+useful for debugging. The default value is 0.
 +
-At level 1, the filters allow only selected system calls that are normally
-expected to be made by *chronyd*. Other system calls are blocked. This level is
-recommended only if it is known to work on the version of the system where
-*chrony* is installed. The filters need to allow also system calls made by
-libraries that *chronyd* is using (e.g. libc), but different versions or
-implementations of the libraries might make different system calls. If the
-filters are missing a system call, *chronyd* could be killed even in normal
-operation.
+On Linux at level 1, the filters allow only selected system calls that are
+normally expected to be made by *chronyd*. Other system calls are blocked.
+This level is recommended only if it is known to work on the version of the
+system where *chrony* is installed. The filters need to allow also system
+calls made by libraries that *chronyd* is using (e.g. libc), but different
+versions or implementations of the libraries might make different system calls.
+If the filters are missing a system call, *chronyd* could be killed even in
+normal operation.
 +
 At level 2, the filters block only a small number of specific system calls
 (e.g. fork and exec). This approach should avoid false positives, but the
@@ -183,15 +184,15 @@ limited.
 The filters cannot be enabled with the *mailonchange* directive.
 
 *-P* _priority_::
-On Linux, FreeBSD, NetBSD, and illumos this option will select the SCHED_FIFO
-real-time scheduler at the specified priority (which must be between 0 and
-100). On macOS, this option must have either a value of 0 to disable the thread
-time constraint policy or 1 for the policy to be enabled. Other systems do not
-support this option. The default value is 0.
+On Linux, FreeBSD, NetBSD, OpenBSD, and illumos this option will select the
+SCHED_FIFO real-time scheduler at the specified priority (which must be
+between 0 and 100). On macOS, this option must have either a value of 0 to
+disable the thread time constraint policy or 1 for the policy to be enabled.
+Other systems do not support this option. The default value is 0.
 
 *-m*::
 This option will lock *chronyd* into RAM so that it will never be paged out.
-This mode is only supported on Linux, FreeBSD, NetBSD, and illumos.
+This mode is only supported on Linux, FreeBSD, NetBSD, OpenBSD, and illumos.
 
 *-x*::
 This option disables the control of the system clock. *chronyd* will not try to
