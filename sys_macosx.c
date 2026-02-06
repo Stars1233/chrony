@@ -236,16 +236,14 @@ static int
 apply_step_offset(double offset)
 {
   struct timespec old_time, new_time, T1;
-  struct timeval new_time_tv;
 
   stop_adjust();
 
   LCL_ReadRawTime(&old_time);
 
   UTI_AddDoubleToTimespec(&old_time, -offset, &new_time);
-  UTI_TimespecToTimeval(&new_time, &new_time_tv);
 
-  if (PRV_SetTime(CLOCK_REALTIME, &new_time_tv) < 0) {
+  if (PRV_SetTime(CLOCK_REALTIME, &new_time) < 0) {
     DEBUG_LOG("clock_settime() failed");
     return 0;
   }
