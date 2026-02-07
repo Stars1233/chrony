@@ -2222,8 +2222,8 @@ hosts allowed by the *cmdallow* directive. The following commands can be
 specified (the naming follows *chronyc*):
 +
 *activity*+*+, *authdata*, *clients*, *manual*+*+, *ntpdata*, *rtcdata*+*+,
-*selectdata*, *serverstats*+*+, *smoothing*+*+, *sourcename*+*+, *sources*+*+,
-*sourcestats*, *tracking*+*+.
+*selectdata*, *serverstats+, *smoothing*+*+, *sourcename*+*+, *sources*+*+,
+*sourcestats*+**, *tracking*+*+.
 +
 The commands marked with +*+ are enabled by default. The protocol of these
 commands is considered stable and can be expected to work between different
