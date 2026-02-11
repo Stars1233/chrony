@@ -137,7 +137,7 @@ test_unit(void)
   CNF_Initialise(0, 0);
   CNF_ParseLine(NULL, 1, conf);
 
-  PRV_Initialise();
+  PRV_Initialise(0);
   LCL_Initialise();
   TST_RegisterDummyDrivers();
   SCH_Initialise();

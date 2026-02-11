@@ -650,7 +650,7 @@ int main
   /* Write our pidfile to prevent other instances from running */
   write_pidfile();
 
-  PRV_Initialise();
+  PRV_Initialise(scfilter_level);
   LCL_Initialise();
   SCH_Initialise();
   SCK_Initialise(address_family);

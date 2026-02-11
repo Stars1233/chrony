@@ -38,6 +38,7 @@ extern void SYS_Finalise(void);
 typedef enum {
   SYS_MAIN_PROCESS,
   SYS_NTSKE_HELPER,
+  SYS_PRIVOPS_HELPER,
 } SYS_ProcessContext;
 
 /* Switch to the specified user and group in given context */

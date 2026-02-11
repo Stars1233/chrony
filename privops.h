@@ -65,11 +65,11 @@ void PRV_ReloadDNS(void);
 #endif
 
 #ifdef PRIVOPS_HELPER
-void PRV_Initialise(void);
+void PRV_Initialise(int scfilter_level);
 void PRV_StartHelper(void);
 void PRV_Finalise(void);
 #else
-#define PRV_Initialise()
+#define PRV_Initialise(scfilter_level)
 #define PRV_StartHelper()
 #define PRV_Finalise()
 #endif

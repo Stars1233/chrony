@@ -658,6 +658,9 @@ SYS_Linux_EnableSystemCallFilter(int level, SYS_ProcessContext context)
        modules are installed and enabled on the system). */
     if (default_action != SCMP_ACT_ALLOW)
       PRV_StartHelper();
+  } else if (context == SYS_PRIVOPS_HELPER) {
+    /* The privops helper on Linux doesn't have any filter loaded */
+    return;
   }
 
   ctx = seccomp_init(default_action);

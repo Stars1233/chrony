@@ -34,6 +34,7 @@
 #include "logging.h"
 #include "privops.h"
 #include "socket.h"
+#include "sys.h"
 #include "util.h"
 
 #define OP_ADJUSTTIME     1024
@@ -131,6 +132,7 @@ typedef struct {
 
 static int helper_fd;
 static pid_t helper_pid;
+static int scfilter_level;
 
 static int
 have_helper(void)
@@ -624,9 +626,10 @@ PRV_ReloadDNS(void)
 /* ======================================================================= */
 
 void
-PRV_Initialise(void)
+PRV_Initialise(int level)
 {
   helper_fd = -1;
+  scfilter_level = level;
 }
 
 /* ======================================================================= */
@@ -666,6 +669,9 @@ PRV_StartHelper(void)
 
     /* ignore signals, the process will exit on OP_QUIT request */
     UTI_SetQuitSignalsHandler(SIG_IGN, 1);
+
+    if (scfilter_level != 0)
+      SYS_EnableSystemCallFilter(scfilter_level, SYS_PRIVOPS_HELPER);
 
     helper_main(sock_fd2);
 
