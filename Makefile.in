@@ -109,7 +109,7 @@ docs :
 install-docs :
 	$(MAKE) -C doc install-docs
 
-%.o : %.c
+%.o : %.c config.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
 
 %.s : %.c
