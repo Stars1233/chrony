@@ -134,6 +134,10 @@ This option is ignored and is provided only for compatibility.
 *-a*::
 This option is ignored and is provided only for compatibility.
 
+*-w*::
+This option sets the output width to 94 columns, from the standard 80, for the
+commands *authdata*, *clients*, *selectdata*, *sources*, and *sourcestats*.
+
 *-v*, *--version*::
 With this option *chronyc* displays its version number on the terminal and
 exits.

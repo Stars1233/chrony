@@ -103,6 +103,49 @@ check_chronyc_output "^#,.,SHM0.*
 \.$" \
 	|| test_fail
 
+client_conf=""
+client_server_conf="
+server node1.net1.clk
+server ntp.notresolved.com
+server 2001:db8:c001:cafe:1234:1234:1234:1234"
+server_conf="server 192.168.123.1"
+server_strata=1
+cmdmon_unix=1
+dns=0
+
+chronyc_options="-w"
+chronyc_conf="authdata -a
+selectdata -a
+sources -a
+sourcestats -a
+clients -k"
+
+run_test || test_fail
+check_chronyd_exit || test_fail
+
+check_chronyc_output "^Name/IP address                           Mode KeyID Type KLen Last Atmp  NAK Cook CLen
+=======================================================================================
+192\.168\.123\.1                                -     0    0    0    -    0    0    0    0
+ID#0000000002                                -     0    0    0    -    0    0    0    0
+(2001:db8:c001:cafe:1234:1234:1234:1234|ID#0000000003)       [- ]+     0    0    0    -    0    0    0    0
+S Name/IP Address                      Auth COpts EOpts Last Score     Interval  Leap
+=====================================================================================
+\* 192\.168\.123\.1                           N ----- -----    [0-9]+   1\.0  [0-9 +-]+[un]s  [0-9 +-]+[un]s  N
+M ID#0000000002                           N ----- -----    0   1\.0    \+0ns    \+0ns  \?
+M (2001:db8:c001:cafe:1234:1234:1234:1234|ID#0000000003)  [N ]+ ----- -----    0   1\.0    \+0ns    \+0ns  \?
+MS Name/IP address                       Stratum Poll Reach LastRx Last sample               
+=============================================================================================
+\^\* 192\.168\.123\.1                               1   [67]   377    [0-9]+ [0-9 +-]+[un]s\[[0-9 +-]+[un]s\] \+/-[ 0-9]+[un]s
+\^\? ID#0000000002                               0   [0-9]+     0     -     \+0ns\[   \+0ns\] \+/-    0ns
+\^\? (2001:db8:c001:cafe:1234:1234:1234:1234|ID#0000000003)      [0 ]+   [0-9]+     0     -     \+0ns\[   \+0ns\] \+/-    0ns
+Name/IP Address                          NP  NR  Span  Frequency  Freq Skew  Offset  Std Dev
+============================================================================================
+192\.168\.123\.1                            [0-9 ]+ [0-9 ]+ [0-9 ]+ [ +-][01]\.... [0-9 ]+\....  [0-9 +-]+[un]s [0-9 ]+[un]s
+ID#0000000002                             0   0     0     \+0\.000   2000\.000     \+0ns  4000ms
+(2001:db8:c001:cafe:1234:1234:1234:1234|ID#0000000003)    [0 ]+   0     0     \+0\.000   2000\.000     \+0ns  4000ms
+Hostname                                    NTP   Drop Int IntL Last  NTS-KE   Drop Int  Last
+=============================================================================================$" || test_fail
+
 chronyc_options=""
 server_strata=0
 chronyc_start=0.5
@@ -110,6 +153,8 @@ client_server_conf=""
 client_conf=""
 server_conf="server 192.168.123.1"
 limit=1
+dns=1
+cmdmon_unix=0
 
 for chronyc_conf in \
 	"accheck 1.2.3.4" \
