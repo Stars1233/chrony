@@ -539,6 +539,7 @@ SYS_Linux_EnableSystemCallFilter(int level, SYS_ProcessContext context)
     SCMP_SYS(pselect6_time64),
 #endif
     SCMP_SYS(read),
+    SCMP_SYS(readv),
     SCMP_SYS(futex),
 #ifdef __NR_futex_time64
     SCMP_SYS(futex_time64),
