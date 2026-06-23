@@ -428,6 +428,9 @@ SYS_Linux_EnableSystemCallFilter(int level, SYS_ProcessContext context)
 #endif
     SCMP_SYS(gettimeofday),
     SCMP_SYS(clock_settime),
+#ifdef __NR_clock_settime64
+    SCMP_SYS(clock_settime64),
+#endif
     SCMP_SYS(time),
 
     /* Process */
