@@ -1770,7 +1770,7 @@ print_report(const char *format, ...)
 {
   char buf[256];
   va_list ap;
-  int i, field, sign, width, prec, spec, varwidth;
+  int i, field, sign, width, prec, spec;
   const char *string;
   unsigned int uinteger;
   uint64_t uinteger64;
@@ -1804,14 +1804,16 @@ print_report(const char *format, ...)
     sign = 0;
     width = 0;
     prec = 5;
-    varwidth = 0;
 
     if (*format == '+' || *format == '-') {
       sign = 1;
       format++;
-    } else if (*format == '*') {
-      varwidth = 1;
+    }
+
+    if (*format == '*') {
+      width = va_arg(ap, int);
       format++;
+      BRIEF_ASSERT(!isdigit((unsigned char)*format));
     }
 
     if (isdigit((unsigned char)*format)) {
@@ -1999,14 +2001,6 @@ print_report(const char *format, ...)
         printf("%*o", width, uinteger);
         break;
       case 's': /* string */
-        if (varwidth) {
-          if (csv_mode) {
-            integer = va_arg(ap, int);
-            width = 0;
-          } else {
-            width = va_arg(ap, int);
-          }
-        }
         string = va_arg(ap, const char *);
         if (sign)
           printf("%-*s", width, string);
