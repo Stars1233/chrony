@@ -1020,9 +1020,9 @@ process_header(struct msghdr *msg, int msg_length, int sock_fd, int flags,
           err.ee_origin != SO_EE_ORIGIN_TIMESTAMPING) {
         log_message(sock_fd, 1, message, "Unexpected extended error in", NULL);
         r = 0;
+      } else {
+        message->timestamp.tx_id = err.ee_data;
       }
-
-      message->timestamp.tx_id = err.ee_data;
     }
 #endif
     else if (match_cmsg(cmsg, SOL_SOCKET, SCM_RIGHTS, 0)) {
