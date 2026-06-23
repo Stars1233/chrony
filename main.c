@@ -70,7 +70,7 @@ static int exit_status = 0;
 
 static int reload = 0;
 
-static int notify_fd = 0;
+static int notify_fd = -1;
 
 static REF_Mode ref_mode = REF_ModeNormal;
 
@@ -113,11 +113,11 @@ static void
 notify_system_manager(int start)
 {
   /* s6-style ready notification using a pipe from the parent */
-  if (start && notify_fd) {
+  if (start && notify_fd >= 0) {
     if (write(notify_fd, "\n", 1) != 1)
       LOG_FATAL("Could not send notification requested by -N option");
     close(notify_fd);
-    notify_fd = 0;
+    notify_fd = -1;
   }
 
 #ifdef LINUX
@@ -416,9 +416,9 @@ go_daemon(void)
       }
 
       /* Don't keep stdin/out/err from before. But don't close
-         the parent pipe yet, or reusable file descriptors. */
+         the parent pipe, notification, and reusable file descriptors. */
       for (fd=0; fd<1024; fd++) {
-        if (fd != pipefd[1] && !SCK_IsReusable(fd))
+        if (fd != pipefd[1] && fd != notify_fd && !SCK_IsReusable(fd))
           close(fd);
       }
 
