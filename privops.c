@@ -558,8 +558,10 @@ PRV_SetTime(clockid_t clockid, const struct timespec *tp)
   PrvRequest req;
   PrvResponse res;
 
-  if (clockid != CLOCK_REALTIME)
+  if (clockid != CLOCK_REALTIME) {
+    errno = EINVAL;
     return -1;
+  }
 
   if (!have_helper())
     return clock_settime(clockid, tp);

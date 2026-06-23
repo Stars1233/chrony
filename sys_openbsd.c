@@ -168,8 +168,10 @@ clock_settime(clockid_t clock, const struct timespec *now)
 {
   struct timeval tv;
 
-  if (clock != CLOCK_REALTIME)
+  if (clock != CLOCK_REALTIME) {
+    errno = EINVAL;
     return -1;
+  }
 
   UTI_TimespecToTimeval(now, &tv);
 
