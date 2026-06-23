@@ -91,14 +91,16 @@ test_unit(void)
   TEST_CHECK(ARR_GetSize(records) == 8);
 
   TST_GetRandomAddress(&ip, IPADDR_INET4, 8);
-  while (UTI_CompareIPs(&ip, &ip2, NULL) == 0)
+  do {
     TST_GetRandomAddress(&ip2, IPADDR_INET4, 8);
+  } while (UTI_CompareIPs(&ip, &ip2, NULL) == 0);
   TEST_CHECK(is_ip_equal(&ip, &ip));
   TEST_CHECK(!is_ip_equal(&ip, &ip2));
   TST_GetRandomAddress(&ip, IPADDR_INET6, 8);
   TEST_CHECK(!is_ip_equal(&ip, &ip2));
-  while (UTI_CompareIPs(&ip, &ip2, NULL) == 0)
+  do {
     TST_GetRandomAddress(&ip2, IPADDR_INET6, 8);
+  } while (UTI_CompareIPs(&ip, &ip2, NULL) == 0);
   TEST_CHECK(is_ip_equal(&ip, &ip));
   TEST_CHECK(!is_ip_equal(&ip, &ip2));
 
