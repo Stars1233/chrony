@@ -126,8 +126,12 @@ static void read_sample(int sockfd, int event, void *anything)
     return;
   }
 
+  if (!UTI_IsTimevalNormal(&sample.tv)) {
+    DEBUG_LOG("Invalid timestamp in SOCK sample");
+    return;
+  }
+
   UTI_TimevalToTimespec(&sample.tv, &sys_ts);
-  UTI_NormaliseTimespec(&sys_ts);
 
   if (!UTI_IsTimeOffsetSane(&sys_ts, sample.offset))
     return;

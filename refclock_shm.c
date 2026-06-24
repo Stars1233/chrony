@@ -94,6 +94,7 @@ static void shm_finalise(RCL_Instance instance)
 static int shm_poll(RCL_Instance instance)
 {
   struct timespec receive_ts, clock_ts;
+  struct timeval receive_tv, clock_tv;
   struct shmTime t, *shm;
 
   shm = (struct shmTime *)RCL_GetDriverData(instance);
@@ -109,20 +110,31 @@ static int shm_poll(RCL_Instance instance)
 
   shm->valid = 0;
 
-  receive_ts.tv_sec = t.receiveTimeStampSec;
-  clock_ts.tv_sec = t.clockTimeStampSec;
-
   if (t.clockTimeStampNSec / 1000 == t.clockTimeStampUSec &&
       t.receiveTimeStampNSec / 1000 == t.receiveTimeStampUSec) {
+    receive_ts.tv_sec = t.receiveTimeStampSec;
     receive_ts.tv_nsec = t.receiveTimeStampNSec;
+    clock_ts.tv_sec = t.clockTimeStampSec;
     clock_ts.tv_nsec = t.clockTimeStampNSec;
-  } else {
-    receive_ts.tv_nsec = 1000 * t.receiveTimeStampUSec;
-    clock_ts.tv_nsec = 1000 * t.clockTimeStampUSec;
-  }
 
-  UTI_NormaliseTimespec(&clock_ts);
-  UTI_NormaliseTimespec(&receive_ts);
+    if (!UTI_IsTimespecNormal(&receive_ts) || !UTI_IsTimespecNormal(&clock_ts)) {
+      DEBUG_LOG("Invalid timestamp in SHM sample");
+      return 0;
+    }
+  } else {
+    receive_tv.tv_sec = t.receiveTimeStampSec;
+    receive_tv.tv_usec = t.receiveTimeStampUSec;
+    clock_tv.tv_sec = t.clockTimeStampSec;
+    clock_tv.tv_usec = t.clockTimeStampUSec;
+
+    if (!UTI_IsTimevalNormal(&receive_tv) || !UTI_IsTimevalNormal(&clock_tv)) {
+      DEBUG_LOG("Invalid timestamp in SHM sample");
+      return 0;
+    }
+
+    UTI_TimevalToTimespec(&receive_tv, &receive_ts);
+    UTI_TimevalToTimespec(&clock_tv, &clock_ts);
+  }
 
   return RCL_AddSample(instance, &receive_ts, &clock_ts, t.leap, 1);
 }
