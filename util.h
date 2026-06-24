@@ -54,6 +54,9 @@ extern double UTI_TimespecToDouble(const struct timespec *ts);
    timespec */
 extern void UTI_DoubleToTimespec(double d, struct timespec *ts);
 
+/* Check if a timespec has nanoseconds in the expected range */
+extern int UTI_IsTimespecNormal(const struct timespec *ts);
+
 /* Normalise a timespec, by adding or subtracting seconds to bring
    its nanosecond field into range */
 extern void UTI_NormaliseTimespec(struct timespec *ts);
@@ -64,6 +67,9 @@ extern double UTI_TimevalToDouble(const struct timeval *tv);
 /* Convert a number of seconds expressed in floating point into a
    timeval */
 extern void UTI_DoubleToTimeval(double a, struct timeval *b);
+
+/* Check if a timeval has microseconds in the expected range */
+extern int UTI_IsTimevalNormal(const struct timeval *tv);
 
 /* Normalise a struct timeval, by adding or subtracting seconds to bring
    its microseconds field into range */

@@ -41,6 +41,7 @@
 #include "hash.h"
 
 #define NSEC_PER_SEC 1000000000
+#define USEC_PER_SEC 1000000
 
 /* ================================================== */
 
@@ -97,10 +98,18 @@ UTI_DoubleToTimespec(double d, struct timespec *ts)
 
 /* ================================================== */
 
+int
+UTI_IsTimespecNormal(const struct timespec *ts)
+{
+  return ts->tv_nsec >= 0 && ts->tv_nsec < NSEC_PER_SEC;
+}
+
+/* ================================================== */
+
 void
 UTI_NormaliseTimespec(struct timespec *ts)
 {
-  if (ts->tv_nsec >= NSEC_PER_SEC || ts->tv_nsec < 0) {
+  if (!UTI_IsTimespecNormal(ts)) {
     ts->tv_sec += ts->tv_nsec / NSEC_PER_SEC;
     ts->tv_nsec = ts->tv_nsec % NSEC_PER_SEC;
 
@@ -135,21 +144,26 @@ UTI_DoubleToTimeval(double a, struct timeval *b)
 
 /* ================================================== */
 
+int
+UTI_IsTimevalNormal(const struct timeval *tv)
+{
+  return tv->tv_usec >= 0 && tv->tv_usec < USEC_PER_SEC;
+}
+
+/* ================================================== */
+
 void
 UTI_NormaliseTimeval(struct timeval *x)
 {
-  /* Reduce tv_usec to within +-1000000 of zero. JGH */
-  if ((x->tv_usec >= 1000000) || (x->tv_usec <= -1000000)) {
-    x->tv_sec += x->tv_usec/1000000;
-    x->tv_usec = x->tv_usec%1000000;
+  if (!UTI_IsTimevalNormal(x)) {
+    x->tv_sec += x->tv_usec / USEC_PER_SEC;
+    x->tv_usec = x->tv_usec % USEC_PER_SEC;
+
+    if (x->tv_usec < 0) {
+      --x->tv_sec;
+      x->tv_usec += USEC_PER_SEC;
+    }
   }
-
-  /* Make tv_usec positive. JGH */
-   if (x->tv_usec < 0) {
-    --x->tv_sec;
-    x->tv_usec += 1000000;
- }
-
 }
 
 /* ================================================== */

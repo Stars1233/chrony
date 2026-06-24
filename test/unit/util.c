@@ -165,6 +165,14 @@ test_unit(void)
   TEST_CHECK(ts.tv_sec == 2);
   TEST_CHECK(ts.tv_nsec == 750000000);
 
+  ts.tv_sec = 0;
+  ts.tv_nsec = 999999999;
+  TEST_CHECK(UTI_IsTimespecNormal(&ts));
+  ts.tv_nsec = 1000000000;
+  TEST_CHECK(!UTI_IsTimespecNormal(&ts));
+  ts.tv_nsec = -1;
+  TEST_CHECK(!UTI_IsTimespecNormal(&ts));
+
   ts.tv_sec = 1;
   ts.tv_nsec = 1200000000;
   UTI_NormaliseTimespec(&ts);
@@ -184,6 +192,14 @@ test_unit(void)
   UTI_DoubleToTimeval(2.75, &tv);
   TEST_CHECK(tv.tv_sec == 2);
   TEST_CHECK(tv.tv_usec == 750000);
+
+  tv.tv_sec = 0;
+  tv.tv_usec = 999999;
+  TEST_CHECK(UTI_IsTimevalNormal(&tv));
+  tv.tv_usec = 1000000;
+  TEST_CHECK(!UTI_IsTimevalNormal(&tv));
+  tv.tv_usec = -1;
+  TEST_CHECK(!UTI_IsTimevalNormal(&tv));
 
   tv.tv_sec = 1;
   tv.tv_usec = 1200000;
