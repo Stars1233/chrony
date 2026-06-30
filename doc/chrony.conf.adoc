@@ -2820,7 +2820,9 @@ NIC clock. The default value is 2.
 This option specifies the maximum number of readings kept for tracking of the
 NIC clock. The default value is 16.
 *precision* _precision_:::
-This option specifies the assumed precision of reading of the NIC clock. The
+This option specifies the assumed precision of reading of the NIC clock and
+maximum error in its tracking relative to the system clock. Larger offsets
+cause the tracking to reset and fall back to kernel or daemon timestamps. The
 default value is 100e-9 (100 nanoseconds).
 *txcomp* _compensation_:::
 This option specifies the difference in seconds between the actual transmission
