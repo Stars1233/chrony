@@ -945,7 +945,7 @@ parse_ratelimit(char *line, int *enabled, int *interval, int *burst, int *leak, 
   while (*line) {
     opt = line;
     line = CPS_SplitWord(line);
-    if (!SSCANF_IN_RANGE(line, "%d%n", &val, &n, -32, 32)) {
+    if (!SSCANF_IN_RANGE(line, "%d%n", &val, &n, -32, 255)) {
       command_parse_error();
       return;
     }
