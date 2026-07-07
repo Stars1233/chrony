@@ -167,7 +167,7 @@ CPS_ParseNTPSourceAdd(char *line, CPS_NTP_Source *src)
       if (sscanf(line, "%lf%n", &src->params.min_delay, &n) != 1)
         return CPS_InvalidValue;
     } else if (!strcasecmp(cmd, "minpoll")) {
-      if (sscanf(line, "%d%n", &src->params.minpoll, &n) != 1)
+      if (!SSCANF_IN_RANGE(line, "%d%n", &src->params.minpoll, &n, -32, 32))
         return CPS_InvalidValue;
     } else if (!strcasecmp(cmd, "minsamples")) {
       if (!SSCANF_IN_RANGE(line, "%d%n", &src->params.min_samples, &n, 0, INT_MAX))
