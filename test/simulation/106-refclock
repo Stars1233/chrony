@@ -207,4 +207,29 @@ check_file_messages "20.* PHC0 .* - ? " 2499 2501 refclocks.log || test_fail
 check_file_messages "20.* PHC0 " 0 0 tracking.log || test_fail
 rm -f tmp/refclocks.log tmp/tracking.log
 
+reset_test_options
+
+cmdmon_unix=0
+client_conf="
+refclock PHC tmp/nosuch/ptp0 optional
+refclock SOCK tmp/nosuch/sock optional
+"
+num_refclocks=2
+if check_config_h 'FEAT_PPS 1'; then
+	client_conf+="refclock PPS tmp/nosuch/pps optional
+	"
+	num_refclocks=$[num_refclocks + 1]
+fi
+if check_config_h 'FEAT_RTC 1'; then
+	client_conf+="refclock RTC tmp/nosuch/rtc optional
+	"
+	num_refclocks=$[num_refclocks + 1]
+fi
+
+run_test || test_fail
+check_chronyd_exit || test_fail
+check_sync || test_fail
+check_log_messages "Could not initialise refclock \(PHC\|PPS\|RTC\|SOCK\)" \
+	$num_refclocks $num_refclocks || test_fail
+
 test_pass

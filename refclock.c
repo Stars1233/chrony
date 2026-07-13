@@ -151,7 +151,6 @@ RCL_AddRefclock(RefclockParameters *params)
   RCL_Instance inst;
 
   inst = MallocNew(struct RCL_Instance_Record);
-  *(RCL_Instance *)ARR_GetNewElement(refclocks) = inst;
 
   if (strcmp(params->driver_name, "SHM") == 0) {
     inst->driver = &RCL_SHM_driver;
@@ -213,7 +212,7 @@ RCL_AddRefclock(RefclockParameters *params)
     inst->ref_id = params->ref_id;
   else {
     unsigned char ref[5] = { 0, 0, 0, 0, 0 };
-    unsigned int index = ARR_GetSize(refclocks) - 1;
+    unsigned int index = ARR_GetSize(refclocks);
 
     snprintf((char *)ref, sizeof (ref), "%3.3s", params->driver_name);
     ref[3] = index % 10 + '0';
@@ -235,8 +234,13 @@ RCL_AddRefclock(RefclockParameters *params)
       inst->driver_poll = inst->poll;
   }
 
-  if (inst->driver->init && !inst->driver->init(inst))
-    LOG_FATAL("refclock %s initialisation failed", params->driver_name);
+  if (inst->driver->init && !inst->driver->init(inst)) {
+    LOG(params->optional ? LOGS_ERR : LOGS_FATAL, "Could not initialise refclock %s %s",
+        params->driver_name, params->driver_parameter);
+    Free(inst->driver_parameter);
+    Free(inst);
+    return 0;
+  }
 
   /* Don't require more than one sample per poll and combine 60% of the
      samples closest to the median offset */
@@ -249,6 +253,8 @@ RCL_AddRefclock(RefclockParameters *params)
   DEBUG_LOG("refclock %s refid=%s poll=%d dpoll=%d filter=%d",
       params->driver_name, UTI_RefidToString(inst->ref_id),
       inst->poll, inst->driver_poll, params->filter_length);
+
+  *(RCL_Instance *)ARR_GetNewElement(refclocks) = inst;
 
   return 1;
 }

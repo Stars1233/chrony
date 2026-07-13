@@ -36,6 +36,7 @@ typedef struct {
   char *driver_parameter;
   int driver_poll;
   int poll;
+  int optional;
   int filter_length;
   int local;
   int pps_forced;

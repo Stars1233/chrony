@@ -751,6 +751,10 @@ selected for synchronisation when it is unreachable (i.e. no valid sample was
 received in the last 8 polls). Only sources with at least one sample more
 recent than the oldest sample of all reachable sources can be selected.
 The default is 100000.
+*optional*:::
+This option indicates that the refclock device might be missing and *chronyd*
+is allowed to start even if the driver fails to initialise, causing the source
+to be ignored as if it was not specified in the configuration file.
 
 [[manual]]*manual*::
 The *manual* directive enables support at run-time for the
