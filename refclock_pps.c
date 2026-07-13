@@ -61,36 +61,42 @@ static int pps_initialise(RCL_Instance instance) {
   edge_clear = RCL_GetDriverOption(instance, "clear") ? 1 : 0;
 
   fd = open(path, O_RDWR);
-  if (fd < 0)
-    LOG_FATAL("Could not open %s : %s", path, strerror(errno));
+  if (fd < 0) {
+    LOG(LOGS_ERR, "Could not open %s : %s", path, strerror(errno));
+    return 0;
+  }
 
   UTI_FdSetCloexec(fd);
 
-  if (time_pps_create(fd, &handle) < 0)
-    LOG_FATAL("time_pps_create() failed on %s : %s", path, strerror(errno));
-
-  if (time_pps_getcap(handle, &mode) < 0)
-    LOG_FATAL("time_pps_getcap() failed on %s : %s", path, strerror(errno));
-
-  if (time_pps_getparams(handle, &params) < 0)
-    LOG_FATAL("time_pps_getparams() failed on %s : %s", path, strerror(errno));
+  if (time_pps_create(fd, &handle) < 0 ||
+      time_pps_getcap(handle, &mode) < 0 ||
+      time_pps_getparams(handle, &params) < 0) {
+    LOG(LOGS_ERR, "Could not %s PPS parameters of %s : %s", "get", path, strerror(errno));
+    goto error;
+  }
 
   if (!edge_clear) {
-    if (!(mode & PPS_CAPTUREASSERT))
-      LOG_FATAL("CAPTUREASSERT not supported on %s", path);
+    if (!(mode & PPS_CAPTUREASSERT)) {
+      LOG(LOGS_ERR, "%s events not supported on %s", "Assert", path);
+      goto error;
+    }
 
     params.mode |= PPS_CAPTUREASSERT;
     params.mode &= ~PPS_CAPTURECLEAR;
   } else {
-    if (!(mode & PPS_CAPTURECLEAR))
-      LOG_FATAL("CAPTURECLEAR not supported on %s", path);
+    if (!(mode & PPS_CAPTURECLEAR)) {
+      LOG(LOGS_ERR, "%s events not supported on %s", "Clear", path);
+      goto error;
+    }
 
     params.mode |= PPS_CAPTURECLEAR;
     params.mode &= ~PPS_CAPTUREASSERT;
   }
 
-  if (time_pps_setparams(handle, &params) < 0)
-    LOG_FATAL("time_pps_setparams() failed on %s : %s", path, strerror(errno));
+  if (time_pps_setparams(handle, &params) < 0) {
+    LOG(LOGS_ERR, "Could not %s PPS parameters of %s : %s", "set", path, strerror(errno));
+    goto error;
+  }
 
   pps = MallocNew(struct pps_instance);
   pps->handle = handle;
@@ -99,6 +105,10 @@ static int pps_initialise(RCL_Instance instance) {
 
   RCL_SetDriverData(instance, pps);
   return 1;
+
+error:
+  close(fd);
+  return 0;
 }
 
 static void pps_finalise(RCL_Instance instance)

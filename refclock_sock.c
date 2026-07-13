@@ -155,8 +155,10 @@ static int sock_initialise(RCL_Instance instance)
   path = RCL_GetDriverParameter(instance);
  
   sockfd = SCK_OpenUnixDatagramSocket(NULL, path, 0);
-  if (sockfd < 0)
-    LOG_FATAL("Could not open socket %s", path);
+  if (sockfd < 0) {
+    LOG(LOGS_ERR, "Could not open socket %s", path);
+    return 0;
+  }
 
   RCL_SetDriverData(instance, (void *)(long)sockfd);
   SCH_AddFileHandler(sockfd, SCH_FILE_INPUT, read_sample, instance);

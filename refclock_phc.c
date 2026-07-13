@@ -82,14 +82,13 @@ static int phc_initialise(RCL_Instance instance)
 
   phc->fd = SYS_Linux_OpenPHC(path, phc->extpps ? O_RDWR : O_RDONLY);
   if (phc->fd < 0)
-    LOG_FATAL("Could not open PHC");
+    goto error;
 
-  if (fstat(phc->fd, &st) < 0 || !S_ISCHR(st.st_mode))
-    LOG_FATAL("Could not get PHC index");
+  if (fstat(phc->fd, &st) < 0 || !S_ISCHR(st.st_mode)) {
+    LOG(LOGS_ERR, "Could not get PHC index");
+    goto error;
+  }
   phc->dev_index = minor(st.st_rdev);
-
-  phc->clock = HCL_CreateInstance(0, 16, UTI_Log2ToDouble(RCL_GetDriverPoll(instance)),
-                                  RCL_GetPrecision(instance));
 
   if (phc->extpps) {
     s = RCL_GetDriverOption(instance, "pin");
@@ -99,8 +98,10 @@ static int phc_initialise(RCL_Instance instance)
     rising_edge = RCL_GetDriverOption(instance, "clear") ? 0 : 1;
 
     if (!SYS_Linux_SetPHCExtTimestamping(phc->fd, phc->pin, phc->channel,
-                                         rising_edge, !rising_edge, 1))
-      LOG_FATAL("Could not enable external PHC timestamping");
+                                         rising_edge, !rising_edge, 1)) {
+      LOG(LOGS_ERR, "Could not enable external PHC timestamping");
+      goto error;
+    }
 
     SCH_AddFileHandler(phc->fd, SCH_FILE_INPUT, read_ext_pulse, instance);
 
@@ -111,8 +112,17 @@ static int phc_initialise(RCL_Instance instance)
     phc->pin = phc->channel = 0;
   }
 
+  phc->clock = HCL_CreateInstance(0, 16, UTI_Log2ToDouble(RCL_GetDriverPoll(instance)),
+                                  RCL_GetPrecision(instance));
+
   RCL_SetDriverData(instance, phc);
   return 1;
+
+error:
+  if (phc->fd >= 0)
+    close(phc->fd);
+  Free(phc);
+  return 0;
 }
 
 static void phc_finalise(RCL_Instance instance)

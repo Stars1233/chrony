@@ -105,8 +105,10 @@ static int refrtc_initialise(RCL_Instance instance)
   path = RCL_GetDriverParameter(instance);
 
   rtcfd = open(path, O_RDONLY);
-  if (rtcfd < 0)
-    LOG_FATAL("Could not open RTC device %s : %s", path, strerror(errno));
+  if (rtcfd < 0) {
+    LOG(LOGS_ERR, "Could not open %s : %s", path, strerror(errno));
+    return 0;
+  }
 
   /* Close on exec */
   UTI_FdSetCloexec(rtcfd);
