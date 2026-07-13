@@ -234,6 +234,7 @@ try_clockctl=0
 feat_scfilter=0
 try_seccomp=-1
 try_pledge=0
+try_sensors=0
 priv_ops=""
 feat_ipv6=1
 feat_phc=1
@@ -448,6 +449,7 @@ case $OPERATINGSYSTEM in
         try_setsched=1
         try_lockmem=1
         try_pledge=1
+        try_sensors=1
         add_def OPENBSD
         if [ $feat_droproot = "1" ]; then
           add_def FEAT_PRIVDROP
@@ -514,7 +516,7 @@ fi
 if [ $feat_refclock = "1" ]; then
   add_def FEAT_REFCLOCK
   EXTRA_OBJECTS="$EXTRA_OBJECTS refclock.o refclock_phc.o refclock_pps.o \
-    refclock_rtc.o refclock_shm.o refclock_sock.o"
+    refclock_rtc.o refclock_sensor.o refclock_shm.o refclock_sock.o"
 fi
 
 MYCC="$CC"
@@ -785,6 +787,18 @@ if [ "x$timepps_h" != "x" ] && \
     return time_pps_fetch(h, PPS_TSFMT_TSPEC, &i, &ts);'
 then
   add_def FEAT_PPS
+fi
+
+if [ $feat_refclock = "1" ] && [ $try_sensors = "1" ] && \
+  test_code 'OpenBSD sensors' 'sys/types.h sys/time.h sys/sysctl.h sys/sensors.h' '' '' '
+    struct sensordev sd;
+    struct sensor s;
+    int mib[5] = { CTL_HW, HW_SENSORS, 0, SENSOR_TIMEDELTA, 0 };
+    size_t len = sizeof (s);
+    return sysctl(mib, 5, &s, &len, NULL, 0) + sizeof (sd.xname) +
+           SENSOR_S_OK + SENSOR_FINVALID;'
+then
+  add_def FEAT_SENSOR
 fi
 
 if [ $feat_droproot = "1" ] && [ $try_libcap = "1" ] && \

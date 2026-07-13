@@ -500,7 +500,7 @@ the driver-specific parameter using the *:* character.
 +
 This directive can be used multiple times to specify multiple reference clocks.
 +
-There are five drivers included in *chronyd*:
+There are six drivers included in *chronyd*:
 +
 *PPS*:::
 Driver for the kernel PPS (pulse per second) API. The parameter is the path to
@@ -634,6 +634,26 @@ Examples:
 +
 ----
 refclock RTC /dev/rtc0:utc
+----
++
+*SENSOR*:::
+Driver for timedelta sensors provided by the OpenBSD *hw.sensors* framework.
+The parameter is the name of the sensor device (e.g. _nmea0_) whose first
+timedelta sensor should be used as a time source. Timedelta sensors are
+provided by serial line time sources attached with *ldattach(8)*, such as
+*nmea(4)*, and by dedicated radio clock devices. When the line discipline is
+configured to timestamp a PPS signal (e.g. *ldattach -t dcd nmea*), the kernel
+timestamps the pulse at interrupt time and the sensor provides a PPS-corrected
+offset of the system clock. Samples are ignored while the kernel marks the
+sensor as invalid or its status is not OK (e.g. the receiver lost its fix, or
+the PPS signal is missing). If the device does not exist yet when *chronyd*
+starts (e.g. it has not been attached with *ldattach(8)* yet), the driver
+waits for it to appear. This driver is available only on OpenBSD.
++
+Examples:
++
+----
+refclock SENSOR nmea0 refid GPS precision 1e-7 prefer
 ----
 +
 {blank}::
