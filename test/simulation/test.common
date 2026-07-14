@@ -90,6 +90,15 @@ for defoptname in ${!default_*}; do
 	[ -z "${!optname}" ] && declare "$optname"="${!defoptname}"
 done
 
+reset_test_options() {
+	local defoptname optname
+
+	for defoptname in ${!default_*}; do
+		optname=${defoptname#default_}
+		printf -v "$optname" "%s" "${!defoptname}"
+	done
+}
+
 test_start() {
 	rm -rf tmp/*
 	echo "Testing $@:"
