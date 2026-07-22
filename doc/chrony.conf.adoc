@@ -151,6 +151,12 @@ the server's certificate when the *nts* option is enabled. Sets of certificates
 can be specified with the <<ntstrustedcerts,*ntstrustedcerts*>> directive. The
 default set is 0, which by default contains certificates of the system's
 default trusted certificate authorities.
+*maxntsretry* _interval_:::
+When the NTS-KE server used with the *nts* option is not responding, or
+providing acceptable cookies, *chronyd* will increase the interval between the
+attempts exponentially to avoid overloading the NTS-KE server. This option
+specifies the maximum interval as a power of 2 in seconds. The default is 19 (6
+days), the minimum is 6 (64 seconds), and maximum 24 (6 months).
 *maxdelay* _delay_:::
 *chronyd* uses the network round-trip delay to the server to determine how
 accurate a particular measurement is likely to be. Long round-trip delays

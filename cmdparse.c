@@ -72,6 +72,7 @@ CPS_ParseNTPSourceAdd(char *line, CPS_NTP_Source *src)
   src->params.sel_options = 0;
   src->params.nts = 0;
   src->params.nts_port = SRC_DEFAULT_NTSPORT;
+  src->params.max_nts_retry = SRC_DEFAULT_MAXNTSRETRY;
   src->params.copy = 0;
   src->params.ext_fields = 0;
   src->params.authkey = INACTIVE_AUTHKEY;
@@ -150,6 +151,9 @@ CPS_ParseNTPSourceAdd(char *line, CPS_NTP_Source *src)
         return CPS_InvalidValue;
     } else if (!strcasecmp(cmd, "maxdelayquant")) {
       if (sscanf(line, "%lf%n", &src->params.max_delay_quant, &n) != 1)
+        return CPS_InvalidValue;
+    } else if (!strcasecmp(cmd, "maxntsretry")) {
+      if (!SSCANF_IN_RANGE(line, "%d%n", &src->params.max_nts_retry, &n, -32, 32))
         return CPS_InvalidValue;
     } else if (!strcasecmp(cmd, "maxpoll")) {
       if (!SSCANF_IN_RANGE(line, "%d%n", &src->params.maxpoll, &n, -32, 32))

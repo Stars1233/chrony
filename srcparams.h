@@ -55,6 +55,7 @@ typedef struct {
   int sel_options;
   int nts;
   int nts_port;
+  int max_nts_retry;
   int copy;
   int ext_fields;
   uint32_t authkey;
@@ -83,6 +84,7 @@ typedef struct {
 #define SRC_DEFAULT_MAXUNREACH 100000
 #define SRC_DEFAULT_ASYMMETRY 1.0
 #define SRC_DEFAULT_NTSPORT 4460
+#define SRC_DEFAULT_MAXNTSRETRY 19
 #define SRC_DEFAULT_CERTSET 0
 #define INACTIVE_AUTHKEY 0
 
