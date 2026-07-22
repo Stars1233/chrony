@@ -148,11 +148,12 @@ NAU_CreateSymmetricInstance(uint32_t key_id)
 
 NAU_Instance
 NAU_CreateNtsInstance(IPSockAddr *nts_address, const char *name, uint32_t cert_set,
-                      uint16_t ntp_port)
+                      uint16_t ntp_port, int max_retry_interval2)
 {
   NAU_Instance instance = create_instance(NTP_AUTH_NTS);
 
-  instance->nts = NNC_CreateInstance(nts_address, name, cert_set, ntp_port);
+  instance->nts = NNC_CreateInstance(nts_address, name, cert_set, ntp_port,
+                                     max_retry_interval2);
 
   return instance;
 }

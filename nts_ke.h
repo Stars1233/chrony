@@ -59,7 +59,8 @@
 
 #define NKE_RETRY_FACTOR2_CONNECT       4
 #define NKE_RETRY_FACTOR2_TLS           10
-#define NKE_MAX_RETRY_INTERVAL2         19
+#define NKE_MIN_MAX_RETRY_INTERVAL2     6
+#define NKE_MAX_MAX_RETRY_INTERVAL2     24
 
 typedef struct {
   int length;

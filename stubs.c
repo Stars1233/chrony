@@ -197,7 +197,7 @@ NNS_GenerateResponseAuth(NTP_Packet *request, NTP_PacketInfo *req_info,
 
 NNC_Instance
 NNC_CreateInstance(IPSockAddr *nts_address, const char *name, uint32_t cert_set,
-                   uint16_t ntp_port)
+                   uint16_t ntp_port, int max_retry_interval2)
 {
   return NULL;
 }

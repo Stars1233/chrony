@@ -253,7 +253,7 @@ test_unit(void)
   SCK_GetLoopbackIPAddress(AF_INET, &addr.ip_addr);
   addr.port = 0;
 
-  inst = NNC_CreateInstance(&addr, "test", 0, 0);
+  inst = NNC_CreateInstance(&addr, "test", 0, 0, 0);
   TEST_CHECK(inst);
 
   for (i = 0; i < 100000; i++) {

@@ -61,6 +61,8 @@ struct NNC_Instance_Record {
   uint32_t cert_set;
   /* Configured NTP port */
   uint16_t default_ntp_port;
+  /* Configured maximum NTS-KE retry interval */
+  int32_t max_retry_interval2;
   /* Address of NTP server (can be negotiated in NTS-KE) */
   IPSockAddr ntp_address;
 
@@ -121,7 +123,8 @@ reset_instance(NNC_Instance inst)
 /* ================================================== */
 
 NNC_Instance
-NNC_CreateInstance(IPSockAddr *nts_address, const char *name, uint32_t cert_set, uint16_t ntp_port)
+NNC_CreateInstance(IPSockAddr *nts_address, const char *name, uint32_t cert_set,
+                   uint16_t ntp_port, int max_retry_interval2)
 {
   NNC_Instance inst;
 
@@ -131,6 +134,8 @@ NNC_CreateInstance(IPSockAddr *nts_address, const char *name, uint32_t cert_set,
   inst->name = Strdup(name);
   inst->cert_set = cert_set;
   inst->default_ntp_port = ntp_port;
+  inst->max_retry_interval2 = CLAMP(NKE_MIN_MAX_RETRY_INTERVAL2, max_retry_interval2,
+                                    NKE_MAX_MAX_RETRY_INTERVAL2);
   inst->ntp_address.ip_addr = nts_address->ip_addr;
   inst->ntp_address.port = ntp_port;
   inst->siv = NULL;
@@ -236,7 +241,7 @@ update_next_nke_attempt(NNC_Instance inst, int failed_start, double now)
     return;
 
   factor = NKC_GetRetryFactor(inst->nke);
-  interval = MIN(factor + inst->nke_attempts - 1, NKE_MAX_RETRY_INTERVAL2);
+  interval = MIN(factor + inst->nke_attempts - 1, inst->max_retry_interval2);
   inst->next_nke_attempt = now + UTI_Log2ToDouble(interval);
 }
 
