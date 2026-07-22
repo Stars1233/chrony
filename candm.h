@@ -111,7 +111,8 @@
 #define REQ_MODIFY_SELECTOPTS 72
 #define REQ_MODIFY_OFFSET 73
 #define REQ_LOCAL3 74
-#define N_REQUEST_TYPES 75
+#define REQ_ADD_SOURCE2 75
+#define N_REQUEST_TYPES 76
 
 /* Structure used to exchange timespecs independent of time_t size */
 typedef struct {
@@ -296,6 +297,7 @@ typedef struct {
   int32_t max_samples;
   uint32_t authkey;
   uint32_t nts_port;
+  int32_t max_nts_retry;
   Float max_delay;
   Float max_delay_ratio;
   Float max_delay_dev_ratio;
@@ -307,6 +309,7 @@ typedef struct {
   uint32_t cert_set;
   Float max_delay_quant;
   int32_t max_unreach;
+  uint32_t reserved[8];
   int32_t EOR;
 } REQ_NTP_Source;
 

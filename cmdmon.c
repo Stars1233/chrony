@@ -699,7 +699,7 @@ handle_add_source(CMD_Request *rx_message, CMD_Reply *tx_message)
   params.filter_length = ntohl(rx_message->data.ntp_source.filter_length);
   params.authkey = ntohl(rx_message->data.ntp_source.authkey);
   params.nts_port = ntohl(rx_message->data.ntp_source.nts_port);
-  params.max_nts_retry = SRC_DEFAULT_MAXNTSRETRY;
+  params.max_nts_retry = ntohl(rx_message->data.ntp_source.max_nts_retry);
   params.cert_set = ntohl(rx_message->data.ntp_source.cert_set);
   params.max_delay = UTI_FloatNetworkToHost(rx_message->data.ntp_source.max_delay);
   params.max_delay_ratio =
@@ -1373,7 +1373,7 @@ static int
 handle_readwrite_commands(int command, CMD_Request *request, CMD_Reply *reply)
 {
   switch (command) {
-    case REQ_ADD_SOURCE:
+    case REQ_ADD_SOURCE2:
       handle_add_source(request, reply);
       break;
     case REQ_ALLOW:

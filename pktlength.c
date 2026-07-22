@@ -119,7 +119,7 @@ static const struct request_length request_lengths[] = {
   { 0, 0 },                                     /* ADD_PEER3 */
   REQ_LENGTH_ENTRY(null, null),                 /* SHUTDOWN */
   REQ_LENGTH_ENTRY(null, null),                 /* ONOFFLINE */
-  REQ_LENGTH_ENTRY(ntp_source, null),           /* ADD_SOURCE */
+  { 0, 0 },                                     /* ADD_SOURCE */
   REQ_LENGTH_ENTRY(ntp_source_name,
                    ntp_source_name),            /* NTP_SOURCE_NAME */
   REQ_LENGTH_ENTRY(null, null),                 /* RESET_SOURCES */
@@ -132,6 +132,7 @@ static const struct request_length request_lengths[] = {
   REQ_LENGTH_ENTRY(modify_select_opts, null),   /* MODIFY_SELECTOPTS */
   REQ_LENGTH_ENTRY(modify_offset, null),        /* MODIFY_OFFSET */
   REQ_LENGTH_ENTRY(local, null),                /* LOCAL3 */
+  REQ_LENGTH_ENTRY(ntp_source, null),           /* ADD_SOURCE2 */
 };
 
 static const uint16_t reply_lengths[] = {

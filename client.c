@@ -1031,7 +1031,7 @@ process_cmd_add_source(CMD_Request *msg, char *line)
   int result = 0, type;
   const char *opt_name, *word;
   
-  msg->command = htons(REQ_ADD_SOURCE);
+  msg->command = htons(REQ_ADD_SOURCE2);
 
   word = line;
   line = CPS_SplitWord(line);
@@ -1080,6 +1080,7 @@ process_cmd_add_source(CMD_Request *msg, char *line)
       msg->data.ntp_source.max_samples = htonl(data.params.max_samples);
       msg->data.ntp_source.authkey = htonl(data.params.authkey);
       msg->data.ntp_source.nts_port = htonl(data.params.nts_port);
+      msg->data.ntp_source.max_nts_retry = htonl(data.params.max_nts_retry);
       msg->data.ntp_source.max_delay = UTI_FloatHostToNetwork(data.params.max_delay);
       msg->data.ntp_source.max_delay_ratio = UTI_FloatHostToNetwork(data.params.max_delay_ratio);
       msg->data.ntp_source.max_delay_dev_ratio =
@@ -1107,6 +1108,7 @@ process_cmd_add_source(CMD_Request *msg, char *line)
       msg->data.ntp_source.max_delay_quant =
         UTI_FloatHostToNetwork(data.params.max_delay_quant);
       msg->data.ntp_source.max_unreach = htonl(data.params.max_unreach);
+      memset(msg->data.ntp_source.reserved, 0, sizeof (msg->data.ntp_source.reserved));
 
       result = 1;
 
