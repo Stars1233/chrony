@@ -1078,13 +1078,18 @@ process_cmd_add_source(CMD_Request *msg, char *line)
       msg->data.ntp_source.max_sources = htonl(data.params.max_sources);
       msg->data.ntp_source.min_samples = htonl(data.params.min_samples);
       msg->data.ntp_source.max_samples = htonl(data.params.max_samples);
+      msg->data.ntp_source.max_unreach = htonl(data.params.max_unreach);
+      msg->data.ntp_source.filter_length = htonl(data.params.filter_length);
       msg->data.ntp_source.authkey = htonl(data.params.authkey);
       msg->data.ntp_source.nts_port = htonl(data.params.nts_port);
+      msg->data.ntp_source.cert_set = htonl(data.params.cert_set);
       msg->data.ntp_source.max_nts_retry = htonl(data.params.max_nts_retry);
       msg->data.ntp_source.max_delay = UTI_FloatHostToNetwork(data.params.max_delay);
       msg->data.ntp_source.max_delay_ratio = UTI_FloatHostToNetwork(data.params.max_delay_ratio);
       msg->data.ntp_source.max_delay_dev_ratio =
         UTI_FloatHostToNetwork(data.params.max_delay_dev_ratio);
+      msg->data.ntp_source.max_delay_quant =
+        UTI_FloatHostToNetwork(data.params.max_delay_quant);
       msg->data.ntp_source.min_delay = UTI_FloatHostToNetwork(data.params.min_delay);
       msg->data.ntp_source.asymmetry = UTI_FloatHostToNetwork(data.params.asymmetry);
       msg->data.ntp_source.offset = UTI_FloatHostToNetwork(data.params.offset);
@@ -1103,11 +1108,6 @@ process_cmd_add_source(CMD_Request *msg, char *line)
           (data.family == IPADDR_INET4 ? REQ_ADDSRC_IPV4 : 0) |
           (data.family == IPADDR_INET6 ? REQ_ADDSRC_IPV6 : 0) |
           convert_addsrc_sel_options(data.params.sel_options));
-      msg->data.ntp_source.filter_length = htonl(data.params.filter_length);
-      msg->data.ntp_source.cert_set = htonl(data.params.cert_set);
-      msg->data.ntp_source.max_delay_quant =
-        UTI_FloatHostToNetwork(data.params.max_delay_quant);
-      msg->data.ntp_source.max_unreach = htonl(data.params.max_unreach);
       memset(msg->data.ntp_source.reserved, 0, sizeof (msg->data.ntp_source.reserved));
 
       result = 1;

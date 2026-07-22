@@ -277,10 +277,10 @@ typedef struct {
 #define REQ_ADDSRC_BURST 0x100
 #define REQ_ADDSRC_NTS 0x200
 #define REQ_ADDSRC_COPY 0x400
-#define REQ_ADDSRC_EF_EXP_MONO_ROOT 0x800
-#define REQ_ADDSRC_EF_NET_CORRECTION 0x1000
-#define REQ_ADDSRC_IPV4 0x2000
-#define REQ_ADDSRC_IPV6 0x4000
+#define REQ_ADDSRC_IPV4 0x800
+#define REQ_ADDSRC_IPV6 0x1000
+#define REQ_ADDSRC_EF_NET_CORRECTION 0x10000
+#define REQ_ADDSRC_EF_EXP_MONO_ROOT 0x80000000
 
 typedef struct {
   uint32_t type;
@@ -295,20 +295,20 @@ typedef struct {
   uint32_t max_sources;
   int32_t min_samples;
   int32_t max_samples;
+  int32_t max_unreach;
+  int32_t filter_length;
   uint32_t authkey;
   uint32_t nts_port;
+  uint32_t cert_set;
   int32_t max_nts_retry;
   Float max_delay;
   Float max_delay_ratio;
   Float max_delay_dev_ratio;
+  Float max_delay_quant;
   Float min_delay;
   Float asymmetry;
   Float offset;
   uint32_t flags;
-  int32_t filter_length;
-  uint32_t cert_set;
-  Float max_delay_quant;
-  int32_t max_unreach;
   uint32_t reserved[8];
   int32_t EOR;
 } REQ_NTP_Source;
