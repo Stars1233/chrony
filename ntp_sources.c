@@ -618,6 +618,7 @@ resolve_sources_timeout(void *arg)
 static void
 name_resolve_handler(DNS_Status status, int n_addrs, IPAddr *ip_addrs, void *anything)
 {
+  static int any_resolved_sources = 0;
   struct UnresolvedSource *us, *next;
 
   us = (struct UnresolvedSource *)anything;
@@ -632,6 +633,7 @@ name_resolve_handler(DNS_Status status, int n_addrs, IPAddr *ip_addrs, void *any
       break;
     case DNS_Success:
       process_resolved_name(us, ip_addrs, n_addrs);
+      any_resolved_sources = 1;
       break;
     case DNS_Failure:
       LOG(LOGS_WARN, "Invalid host %s", us->name);
@@ -671,6 +673,9 @@ name_resolve_handler(DNS_Status status, int n_addrs, IPAddr *ip_addrs, void *any
                                  MAX_RESOLVE_INTERVAL);
       resolving_id = SCH_AddTimeoutByDelay(RESOLVE_INTERVAL_UNIT * (1 << resolving_interval),
                                            resolve_sources_timeout, NULL);
+
+      if (!any_resolved_sources && resolving_interval == MAX_RESOLVE_INTERVAL)
+        LOG_ONCE(LOGS_WARN, "Could not resolve any hostnames yet (misconfigured DNS?)");
     } else {
       resolving_interval = 0;
     }
