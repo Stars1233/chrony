@@ -255,6 +255,9 @@ void LOG_SetMinSeverity(LOG_Severity severity)
 {
   /* Don't print any debug messages in a non-debug build */
   log_min_severity = CLAMP(DEBUG > 0 ? LOGS_DEBUG : LOGS_INFO, severity, LOGS_FATAL);
+
+  if (DEBUG == 0 && severity <= LOGS_DEBUG)
+    LOG(LOGS_WARN, "Debug messages missing in non-debug build");
 }
 
 /* ================================================== */
