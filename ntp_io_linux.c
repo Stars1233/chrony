@@ -726,11 +726,7 @@ get_saved_tx_message(SCK_Message *message)
                              message->timestamp.tx_id % ARR_GetSize(saved_tx_messages));
 
   if (message->timestamp.tx_id != saved_msg->tx_id) {
-    static int warned = 0;
-    if (!warned) {
-      LOG(LOGS_WARN, "maxtxbuffers too small");
-      warned = 1;
-    }
+    LOG_ONCE(LOGS_WARN, "maxtxbuffers too small");
     return 0;
   }
 

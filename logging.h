@@ -64,6 +64,15 @@
 
 #define LOG(severity, ...) LOG_MESSAGE(severity, __VA_ARGS__)
 
+#define LOG_ONCE(severity, ...) \
+  do { \
+    static int logged_once = 0; \
+    if (!logged_once) { \
+      LOG_MESSAGE(severity, __VA_ARGS__); \
+      logged_once = 1; \
+    } \
+  } while (0)
+
 /* Definition of severity */
 typedef enum {
   LOGS_DEBUG = -1,
